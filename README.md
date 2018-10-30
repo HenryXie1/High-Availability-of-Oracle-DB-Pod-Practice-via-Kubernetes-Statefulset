@@ -1,4 +1,4 @@
-# High Availbility of Oracle DB Pod Practice via Kubernetes Statefulset
+# High Availability  of Oracle DB Pod Practice via Kubernetes Statefulset
 
 ###  Requirement:
 It is similar as Oracle Rac One Architecture.  The target is to use Kubernetes to manage Oracle DB Pods like Rac One.  It has all the benefits of Rac One has. Details of Rac One benefits, please refer oracle Rac One [official website ][1]  
