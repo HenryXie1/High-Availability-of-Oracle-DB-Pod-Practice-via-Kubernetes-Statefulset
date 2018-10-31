@@ -55,5 +55,33 @@ spec:
 ```
 * We use kubectl drain   \--ignore-daemonsets  --force to test node eviction. It would shutdown the pod gracefully and wait 30s to start a new pod  in another node
 * Or kubectl delete pod  to test  pod eviction. It would shutdown the pod gracefully and wait 30s to start a new pod in the same node 
+* To automate kubectl drain the node which is unresponsive (ie host crash, or disk faulty), we can crontab below script to drain the node
+```
+#!/bin/sh
+
+KUBECTL="/bin/kubectl"
+
+# Get only nodes which are not drained yet
+NOT_READY_NODES=$($KUBECTL get nodes | grep  'NotReady' | awk '{print $1}' | xargs echo)
+# Get only nodes which are still drained
+READY_NODES=$($KUBECTL get nodes | grep '\sReady,SchedulingDisabled' | awk '{print $1}' | xargs echo)
+
+echo "Unready nodes that are undrained: $NOT_READY_NODES"
+echo "Ready nodes: $READY_NODES"
+
+
+for node in $NOT_READY_NODES; do
+  echo "Node $node not drained yet, draining..."
+  $KUBECTL drain --ignore-daemonsets --force $node
+  echo "Done"
+done;
+
+date
+for node in $READY_NODES; do
+  echo "Node $node still drained, uncordoning..."
+  $KUBECTL uncordon $node
+  echo "Done"
+done;
+```
 
 [1]: https://www.oracle.com/database/technologies/rac/racone.html
