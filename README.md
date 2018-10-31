@@ -66,8 +66,8 @@ NOT_READY_NODES=$($KUBECTL get nodes | grep  'NotReady' | awk '{print $1}' | xar
 # Get only nodes which are still drained
 READY_NODES=$($KUBECTL get nodes | grep '\sReady,SchedulingDisabled' | awk '{print $1}' | xargs echo)
 
-echo "Unready nodes that are undrained: $NOT_READY_NODES"
-echo "Ready nodes: $READY_NODES"
+echo "Unready nodes that are be drained: $NOT_READY_NODES"
+echo "Ready nodes which need to uncordon: $READY_NODES"
 
 
 for node in $NOT_READY_NODES; do
@@ -78,7 +78,7 @@ done;
 
 date
 for node in $READY_NODES; do
-  echo "Node $node still drained, uncordoning..."
+  echo "Node $node are ready, uncordoning..."
   $KUBECTL uncordon $node
   echo "Done"
 done;
